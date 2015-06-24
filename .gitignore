@@ -1,0 +1,14 @@
+.gradle
+/local.properties
+.DS_Store
+/build
+/captures
+/build.gradle
+/gradlew
+/gradlew.bat
+/gradle.properties
+/GravitySimulator.iml
+/settings.gradle
+/gradle
+/app/src/androidTest
+/.idea
