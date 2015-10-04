@@ -11,69 +11,104 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener {
 
     private GravityView gravityView;
-    private SeekBar radiusSeekBar;
-    private EditText radiusET;
+    private SeekBar radiusSeekBar, massSeekBar, densitySeekBar;
+    private EditText radiusET, massET, densityET;
+
+    /**
+     * The relation between the radius of a newly created Luminary and its mass.
+     * The mass is calculated as {@code m = density * r^3}.
+     * When the radiusSeekBar value is changed, the massSeekBar and massET are adapted
+     * according to the above equation.
+     * When the massSeekBar value is changed, the radiusSeekBar will not be updated. Instead,
+     * the value of {@code radiusMassRatio} is updated.
+     */
+    private double density = 10000;
+
+    // TODO: add a variable which takes care of the zoom. Now 1 meter = 1 pixel, that has to be changed.
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        initViews();
+
+        gravityView.requestFocus();
+        radiusSeekBar.setOnSeekBarChangeListener(this);
+        massSeekBar.setOnSeekBarChangeListener(this);
+        densitySeekBar.setOnSeekBarChangeListener(this);
+        setupETs();
+    }
+
+    private void initViews() {
         gravityView = (GravityView) findViewById(R.id.gravityView);
         radiusSeekBar = (SeekBar) findViewById(R.id.radius_seekBar);
         radiusET = (EditText) findViewById(R.id.radius_editText);
-
-        gravityView.requestFocus();
-        setupSeekBar();
-        setupRadiusET();
+        massSeekBar = (SeekBar) findViewById(R.id.mass_seekBar);
+        massET = (EditText) findViewById(R.id.mass_editText);
+        densitySeekBar = (SeekBar) findViewById(R.id.density_seekBar);
+        densityET = (EditText) findViewById(R.id.density_editText);
     }
 
-    private void setupSeekBar() {
-        // Set the max value
-        /*if (gravityView.getWidth() >= gravityView.getHeight()) {
-            radiusSeekBar.setMax(gravityView.getHeight() / 2);
-        } else {
-            radiusSeekBar.setMax(gravityView.getWidth() / 2);
-        }*/ // TODO why doesn't this work
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        if (!fromUser) return;
 
-        // Set the listener
-        radiusSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (fromUser) {
-                    gravityView.setRadius(progress);
-                    radiusET.setText("" + progress);
-                }
-            }
-
-            public void onStartTrackingTouch(SeekBar seekBar) {/*ignored*/}
-
-            public void onStopTrackingTouch(SeekBar seekBar) {/*ignored*/}
-        });
+        switch (seekBar.getId()) {
+            case R.id.radius_seekBar:
+                gravityView.setRadius(progress);
+                radiusET.setText("" + progress);
+                break;
+            case R.id.mass_seekBar:
+                gravityView.setMass(progress);
+                massET.setText("" + progress);
+                break;
+            case R.id.density_seekBar:
+                density = progress;
+                densityET.setText("" + progress);
+                double mass = density * gravityView.getRadius() * gravityView.getRadius() * gravityView.getRadius();
+                massSeekBar.setProgress((int) mass);
+                onProgressChanged(massSeekBar, (int) mass, true);
+        }
     }
 
-    private void setupRadiusET() {
+    private void setupETs() {
         radiusET.setText("" + radiusSeekBar.getProgress());
+        massET.setText("" + massSeekBar.getProgress());
+
         radiusET.addTextChangedListener(new TextWatcher() {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 int radius;
-                try {
-                    radius = Integer.parseInt(radiusET.getText().toString());
-                } catch (NumberFormatException e) {
-                    radius = 0;
-                }
+                String input = radiusET.getText().toString();
+                if (validInteger(input)) radius = Integer.parseInt(input);
+                else radius = 0;
 
-                if (radius > radiusSeekBar.getMax()) {
+                if (radius > radiusSeekBar.getMax())
                     radiusSeekBar.setProgress(radiusSeekBar.getMax());
-                    gravityView.setRadius(radius);
-                } else {
-                    radiusSeekBar.setProgress(radius);
-                    gravityView.setRadius(radius);
-                }
+                else radiusSeekBar.setProgress(radius);
+                gravityView.setRadius(radius);
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {/*ignored*/}
+
+            public void afterTextChanged(Editable s) {/*ignored*/}
+        });
+        massET.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                int mass;
+                String input = massET.getText().toString();
+                if (validInteger(input)) mass = Integer.parseInt(input);
+                else mass = 0;
+
+                if (mass > massSeekBar.getMax())
+                    massSeekBar.setProgress(massSeekBar.getMax());
+                else massSeekBar.setProgress(mass);
+                gravityView.setMass(mass);
             }
 
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {/*ignored*/}
@@ -109,6 +144,22 @@ public class MainActivity extends AppCompatActivity {
                     | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                     | View.SYSTEM_UI_FLAG_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        }
+    }
+
+
+    public void onStartTrackingTouch(SeekBar seekBar) {/*ignored*/}
+
+    public void onStopTrackingTouch(SeekBar seekBar) {/*ignored*/}
+
+
+    public static boolean validInteger(String toCheck) {
+        try {
+            //noinspection ResultOfMethodCallIgnored
+            Integer.parseInt(toCheck);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
         }
     }
 }

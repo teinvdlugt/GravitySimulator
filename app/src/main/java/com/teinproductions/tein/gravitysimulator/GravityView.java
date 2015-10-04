@@ -18,6 +18,7 @@ public class GravityView extends View {
     private Paint paint = new Paint();
 
     private int radius = 20;
+    private double mass = 100000000;
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -25,11 +26,13 @@ public class GravityView extends View {
 
         paint.setColor(getResources().getColor(R.color.luminaryColor));
 
-        for (Luminary luminary : luminaries) {
-            if (luminary.getRadius() == 0) {
-                canvas.drawPoint((float) luminary.getX(), (float) luminary.getY(), paint);
-            } else {
-                canvas.drawCircle((float) luminary.getX(), (float) luminary.getY(), luminary.getRadius(), paint);
+        synchronized (lock) {
+            for (Luminary luminary : luminaries) {
+                if (luminary.getRadius() == 0) {
+                    canvas.drawPoint((float) luminary.getX(), (float) luminary.getY(), paint);
+                } else {
+                    canvas.drawCircle((float) luminary.getX(), (float) luminary.getY(), (float) luminary.getRadius(), paint);
+                }
             }
         }
     }
@@ -41,7 +44,9 @@ public class GravityView extends View {
             public void run() {
                 while (running) {
                     synchronized (lock) {
-                        Luminary.move(luminaries, 1000);
+                        Luminary.move(luminaries, 100);
+                        removeLuminariesOutsideField();
+                        Luminary.mergeColliding(luminaries);
                     }
                     postInvalidate();
                     try {
@@ -52,6 +57,18 @@ public class GravityView extends View {
                 }
             }
         }).start();
+    }
+
+    private void removeLuminariesOutsideField() {
+        for (int i = 0; i < luminaries.size(); i++) {
+            Luminary luminary = luminaries.get(i);
+            if (luminary.getX() + luminary.getRadius() < 0
+                    || luminary.getX() - luminary.getRadius() > getWidth()
+                    || luminary.getY() + luminary.getRadius() < 0
+                    || luminary.getY() - luminary.getRadius() > getHeight()) {
+                luminaries.remove(i);
+            }
+        }
     }
 
     public void stop() {
@@ -65,7 +82,7 @@ public class GravityView extends View {
             float y = (int) event.getY();
 
             synchronized (lock) {
-                luminaries.add(new Luminary(radius, x, y));
+                luminaries.add(new Luminary(radius, mass, x, y));
                 invalidate();
             }
             return true;
@@ -83,6 +100,14 @@ public class GravityView extends View {
 
     public void setRadius(int radius) {
         this.radius = radius;
+    }
+
+    public double getMass() {
+        return mass;
+    }
+
+    public void setMass(double mass) {
+        this.mass = mass;
     }
 
     public GravityView(Context context) {
