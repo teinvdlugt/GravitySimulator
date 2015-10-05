@@ -75,6 +75,13 @@ public class Luminary {
         this.mass = mass;
     }
 
+    public boolean collidesWith(Luminary other) {
+        final double diffX = x - other.x;
+        final double diffY = y - other.y;
+        final double distance = Math.sqrt(diffX * diffX + diffY * diffY);
+        return distance <= radius + other.radius;
+    }
+
     public static void move(ArrayList<Luminary> luminaries, double time) {
         if (luminaries.size() == 1) {
             luminaries.get(0).addPos(luminaries.get(0).getVelocityX() * time, luminaries.get(0).getVelocityY() * time);
@@ -82,14 +89,19 @@ public class Luminary {
 
         for (int i = 0; i < luminaries.size(); i++) {
             for (int j = i + 1; j < luminaries.size(); j++) {
+                Luminary l1 = luminaries.get(i);
+                Luminary l2 = luminaries.get(j);
+
                 // Distance between the two objects:
-                final double diffX = luminaries.get(j).getX() - luminaries.get(i).getX();
-                final double diffY = luminaries.get(j).getY() - luminaries.get(i).getY();
+                final double diffX = l2.x - l1.x;
+                final double diffY = l2.y - l1.y;
                 final double r = Math.sqrt(diffX * diffX + diffY * diffY);
 
+                boolean nowTouching = l1.collidesWith(l2);
+
                 // Mass of the two objects:
-                double m1 = luminaries.get(i).mass;
-                double m2 = luminaries.get(j).mass;
+                double m1 = l1.mass;
+                double m2 = l2.mass;
 
                 // Force between the two objects:
                 final double F = G * m1 * m2 / r / r;
@@ -110,18 +122,43 @@ public class Luminary {
                 final double vY2 = v2 * -diffY / r;
 
                 // Gain of X and Y positions:
-                final double X1 = luminaries.get(i).getVelocityX() * time + vX1 * time;
-                final double Y1 = luminaries.get(i).getVelocityY() * time + vY1 * time;
-                final double X2 = luminaries.get(j).getVelocityX() * time + vX2 * time;
-                final double Y2 = luminaries.get(j).getVelocityY() * time + vY2 * time;
+                final double X1 = l1.velocityX * time + vX1 * time;
+                final double Y1 = l1.velocityY * time + vY1 * time;
+                final double X2 = l2.velocityX * time + vX2 * time;
+                final double Y2 = l2.velocityY * time + vY2 * time;
 
                 // Add the positions:
-                luminaries.get(i).addPos(X1, Y1);
-                luminaries.get(j).addPos(X2, Y2);
+                l1.addPos(X1, Y1);
+                l2.addPos(X2, Y2);
 
                 // Add the velocities:
-                luminaries.get(i).addVelocity(vX1, vY1);
-                luminaries.get(j).addVelocity(vX2, vY2);
+                l1.addVelocity(vX1, vY1);
+                l2.addVelocity(vX2, vY2);
+
+                // Check if collision happened
+                if (!nowTouching && l1.collidesWith(l2)) {
+                    //l1.velocityX = l1.velocityY = l2.velocityX = l2.velocityY = 0;
+                    /*final double diffX2 = l2.getX() - l1.getX();
+                    final double diffY2 = l2.getY() - l1.getY();
+                    final double r2 = Math.sqrt(diffX * diffX + diffY * diffY);*/
+                }
+            }
+        }
+    }
+
+    public static void stopColliding(ArrayList<Luminary> luminaries) {
+        for (int i = 0; i < luminaries.size(); i++) {
+            for (int j = 0; j < luminaries.size(); j++) {
+                final double diffX = luminaries.get(j).x - luminaries.get(i).x;
+                final double diffY = luminaries.get(j).y - luminaries.get(i).y;
+                final double distance = Math.sqrt(diffX * diffX + diffY * diffY);
+
+                final double radius1 = luminaries.get(i).radius;
+                final double radius2 = luminaries.get(j).radius;
+
+                if (distance <= radius1 + radius2) {
+
+                }
             }
         }
     }
