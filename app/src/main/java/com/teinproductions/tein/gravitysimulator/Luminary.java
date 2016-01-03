@@ -10,6 +10,7 @@ public class Luminary {
     private double mass;
     private double x, y;
     private double velocityX = 0, velocityY = 0;
+    private double aX = 0, aY = 0;
 
     public Luminary(double radius, double mass, double x, double y) {
         this.radius = radius;
@@ -76,11 +77,42 @@ public class Luminary {
         this.mass = mass;
     }
 
+    public void addAcceleration(double aX, double aY) {
+        this.aX += aX;
+        this.aY += aY;
+    }
+
+    public void addMomentum(double px, double py) {
+        addVelocity(px / mass, py / mass);
+    }
+
     public boolean collidesWith(Luminary other) {
         final double diffX = x - other.x;
         final double diffY = y - other.y;
         final double distance = Math.sqrt(diffX * diffX + diffY * diffY);
         return distance <= radius + other.radius;
+    }
+
+    /**
+     * Use the {@code acceleration} of the {@code Luminary} to change its
+     * position and velocity during a given time. After that, reset the
+     * {@code} acceleration to 0.
+     *
+     * @param time The time to use in the calculations.
+     */
+    public void commit(double time) {
+        // Gain of velocity during the given time:
+        final double dvx = .5 * aX * time;
+        final double dvy = .5 * aY * time;
+
+        // Gain of X and Y positions:
+        final double dx = velocityX * time + dvx * time;
+        final double dy = velocityY * time + dvy * time;
+
+        addPos(dx, dy);
+        addVelocity(dvx, dvy);
+
+        aX = aY = 0;
     }
 
     public static void move(ArrayList<Luminary> luminaries, double time) {
@@ -98,7 +130,7 @@ public class Luminary {
                 final double diffY = l2.y - l1.y;
                 final double r = Math.sqrt(diffX * diffX + diffY * diffY);
 
-                boolean nowTouching = l1.collidesWith(l2);
+                /*boolean nowTouching = l1.collidesWith(l2);*/
 
                 // Mass of the two objects:
                 double m1 = l1.mass;
@@ -108,58 +140,76 @@ public class Luminary {
                 final double F = G * m1 * m2 / r / r;
 
                 // Acceleration of the two objects:
-                // a = F / m
                 final double a1 = F / m1;
                 final double a2 = F / m2;
 
-                // Gain of velocity during the given time:
-                final double v1 = .5 * a1 * time;
-                final double v2 = .5 * a2 * time;
+                // Acceleration per axis:
+                final double aX1 = a1 * diffX / r;
+                final double aY1 = a1 * diffY / r;
+                final double aX2 = a2 * -diffX / r;
+                final double aY2 = a2 * -diffY / r;
 
-                // Average gain of velocity per axis:
-                final double vX1 = v1 * diffX / r;
-                final double vY1 = v1 * diffY / r;
-                final double vX2 = v2 * -diffX / r;
-                final double vY2 = v2 * -diffY / r;
+                // Add the accelerations:
+                l1.addAcceleration(aX1, aY1);
+                l2.addAcceleration(aX2, aY2);
 
-                // Gain of X and Y positions:
-                final double X1 = l1.velocityX * time + vX1 * time;
-                final double Y1 = l1.velocityY * time + vY1 * time;
-                final double X2 = l2.velocityX * time + vX2 * time;
-                final double Y2 = l2.velocityY * time + vY2 * time;
-
-                // Add the positions:
-                l1.addPos(X1, Y1);
-                l2.addPos(X2, Y2);
-
-                // Add the velocities:
-                l1.addVelocity(vX1, vY1);
-                l2.addVelocity(vX2, vY2);
-
-                // Check if collision happened
+                /*// Check if collision happened
                 if (!nowTouching && l1.collidesWith(l2)) {
                     //l1.velocityX = l1.velocityY = l2.velocityX = l2.velocityY = 0;
-                    /*final double diffX2 = l2.getX() - l1.getX();
+                    final double diffX2 = l2.getX() - l1.getX();
                     final double diffY2 = l2.getY() - l1.getY();
-                    final double r2 = Math.sqrt(diffX * diffX + diffY * diffY);*/
-                }
+                    final double r2 = Math.sqrt(diffX * diffX + diffY * diffY);
+                }*/
             }
+        }
+
+        for (Luminary luminary : luminaries) {
+            luminary.commit(time);
         }
     }
 
-    public static void stopColliding(ArrayList<Luminary> luminaries) {
+    public static void collide(ArrayList<Luminary> luminaries) {
         for (int i = 0; i < luminaries.size(); i++) {
-            for (int j = 0; j < luminaries.size(); j++) {
-                final double diffX = luminaries.get(j).x - luminaries.get(i).x;
-                final double diffY = luminaries.get(j).y - luminaries.get(i).y;
-                final double distance = Math.sqrt(diffX * diffX + diffY * diffY);
+            for (int j = i + 1; j < luminaries.size(); j++) {
+                Luminary l1 = luminaries.get(i);
+                Luminary l2 = luminaries.get(j);
 
-                final double radius1 = luminaries.get(i).radius;
-                final double radius2 = luminaries.get(j).radius;
+                // Distance between the two objects:
+                final double diffX = l2.x - l1.x;
+                final double diffY = l2.y - l1.y;
+                final double r = Math.sqrt(diffX * diffX + diffY * diffY);
 
-                if (distance <= radius1 + radius2) {
+                // Check if the two Luminaries touch each other:
+                final boolean colliding = r <= l1.radius + l2.radius;
+                if (!colliding) continue;
 
-                }
+                // Calculate the angle theta at which they collide:
+                final double th = Math.atan2(diffY, diffX);
+
+                // Backup velocities
+                final double vX1 = l1.velocityX;
+                final double vY1 = l1.velocityY;
+                final double vX2 = l2.velocityX;
+                final double vY2 = l2.velocityY;
+
+                // Carry momentum from l1 to l2
+                double px1 = vX1 * l1.mass;
+                double py1 = vY1 * l1.mass;
+                double dp2 = Math.cos(th) * px1 + Math.cos(th - Math.PI / 2) * py1;
+                double dpx2 = Math.cos(th) * dp2;
+                double dpy2 = Math.sin(th) * dp2;
+                l1.addMomentum(-dpx2, -dpy2);
+                l2.addMomentum(dpx2, dpy2);
+
+                // Carry momentum from l2 to l1
+                double px2 = vX2 * l2.mass;
+                double dp1 = Math.cos(th) * px2;
+                double py2 = vY2 * l2.mass;
+                dp1 += Math.cos(th - Math.PI / 2) * py2;
+                double dpx1 = Math.sin(th) * dp1;
+                double dpy1 = Math.cos(th) * dp1;
+                l1.addMomentum(dpx1, dpy1);
+                l2.addMomentum(-dpx1, -dpy1);
             }
         }
     }
@@ -194,4 +244,21 @@ public class Luminary {
             }
         }
     }
+
+    /*public static void stopColliding(ArrayList<Luminary> luminaries) {
+        for (int i = 0; i < luminaries.size(); i++) {
+            for (int j = 0; j < luminaries.size(); j++) {
+                final double diffX = luminaries.get(j).x - luminaries.get(i).x;
+                final double diffY = luminaries.get(j).y - luminaries.get(i).y;
+                final double distance = Math.sqrt(diffX * diffX + diffY * diffY);
+
+                final double radius1 = luminaries.get(i).radius;
+                final double radius2 = luminaries.get(j).radius;
+
+                if (distance <= radius1 + radius2) {
+
+                }
+            }
+        }
+    }*/
 }

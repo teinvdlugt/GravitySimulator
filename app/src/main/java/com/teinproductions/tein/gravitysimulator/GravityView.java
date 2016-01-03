@@ -46,7 +46,7 @@ public class GravityView extends View {
                     synchronized (lock) {
                         Luminary.move(luminaries, 100);
                         removeLuminariesOutsideField();
-                        Luminary.mergeColliding(luminaries);
+                        Luminary.collide(luminaries);
                     }
                     postInvalidate();
                     try {
