@@ -13,6 +13,7 @@ public class Luminary {
 
     public Luminary(double radius, double mass, double x, double y) {
         this.radius = radius;
+        this.mass = mass;
         this.x = x;
         this.y = y;
     }

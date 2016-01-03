@@ -1,32 +1,33 @@
-<!--<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">-->
+    tools:context=".MainActivity">
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <com.teinproductions.tein.gravitysimulator.GravityView
-        android:id="@+id/gravityView"
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
 
-    <ImageButton
-        android:id="@+id/playPauseButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@null"
-        android:contentDescription="@string/xs_play_imgButton"
-        android:onClick="onClickPlayPause"
-        android:src="@mipmap/ic_play_arrow_grey600_36dp" />
+        <com.teinproductions.tein.gravitysimulator.GravityView
+            android:id="@+id/gravityView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <ImageButton
+            android:id="@+id/playPauseButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:contentDescription="@string/xs_play_imgButton"
+            android:onClick="onClickPlayPause"
+            android:src="@mipmap/ic_play_arrow_grey600_36dp" />
+    </FrameLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_gravity="start"
         android:background="@color/background_material_dark"
-        android:gravity="start"
         android:orientation="vertical"
         android:paddingBottom="16dp"
         android:paddingLeft="16dp"
@@ -112,5 +113,4 @@
                 android:text="20" />
         </LinearLayout>
     </LinearLayout>
-
-</FrameLayout>
+</android.support.v4.widget.DrawerLayout>
