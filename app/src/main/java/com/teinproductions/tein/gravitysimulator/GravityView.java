@@ -90,6 +90,10 @@ public class GravityView extends View {
         return super.onTouchEvent(event);
     }
 
+    private void init() {
+        setBackgroundColor(getContext().getResources().getColor(R.color.backgroundColor));
+    }
+
     public boolean isRunning() {
         return running;
     }
@@ -112,13 +116,16 @@ public class GravityView extends View {
 
     public GravityView(Context context) {
         super(context);
+        init();
     }
 
     public GravityView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init();
     }
 
     public GravityView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        init();
     }
 }

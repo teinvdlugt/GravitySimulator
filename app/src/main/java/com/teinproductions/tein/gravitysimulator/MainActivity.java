@@ -16,6 +16,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     private GravityView gravityView;
     private SeekBar radiusSeekBar, massSeekBar, densitySeekBar;
     private EditText radiusET, massET, densityET;
+    private ImageButton playButton, pauseButton;
 
     /**
      * The relation between the radius of a newly created Luminary and its mass.
@@ -41,6 +42,18 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         massSeekBar.setOnSeekBarChangeListener(this);
         densitySeekBar.setOnSeekBarChangeListener(this);
         setupETs();
+        playButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onClickPlay();
+            }
+        });
+        pauseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onClickPause();
+            }
+        });
     }
 
     private void initViews() {
@@ -51,6 +64,8 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         massET = (EditText) findViewById(R.id.mass_editText);
         densitySeekBar = (SeekBar) findViewById(R.id.density_seekBar);
         densityET = (EditText) findViewById(R.id.density_editText);
+        playButton = (ImageButton) findViewById(R.id.playButton);
+        pauseButton = (ImageButton) findViewById(R.id.pauseButton);
     }
 
     @Override
@@ -117,20 +132,17 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         });
     }
 
-    public void onClickPlayPause(View view) {
-        if (gravityView.isRunning()) {
-            gravityView.stop();
-            ((ImageButton) view).setImageResource(R.mipmap.ic_play_arrow_grey600_36dp);
-        } else {
-            gravityView.begin();
-            ((ImageButton) view).setImageResource(R.mipmap.ic_pause_grey600_36dp);
-        }
+    private void onClickPlay() {
+        gravityView.begin();
+    }
+
+    private void onClickPause() {
+        gravityView.stop();
     }
 
     @Override
     protected void onPause() {
         gravityView.stop();
-        ((ImageButton) findViewById(R.id.playPauseButton)).setImageResource(R.mipmap.ic_play_arrow_grey600_36dp);
         super.onPause();
     }
 
@@ -151,7 +163,6 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     public void onStartTrackingTouch(SeekBar seekBar) {/*ignored*/}
 
     public void onStopTrackingTouch(SeekBar seekBar) {/*ignored*/}
-
 
     public static boolean validInteger(String toCheck) {
         try {
