@@ -11,20 +11,20 @@
         android:layout_gravity="end">
 
         <ImageButton
-            android:contentDescription="@string/xs_play"
             android:id="@+id/pauseButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/xs_play"
             android:padding="8dp"
             app:srcCompat="@drawable/ic_pause_white_36dp" />
 
         <ImageButton
-            android:contentDescription="@string/xs_pause"
             android:id="@+id/playButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/xs_pause"
             android:padding="8dp"
             app:srcCompat="@drawable/ic_play_arrow_white_36dp" />
     </LinearLayout>
@@ -36,7 +36,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical">
 
         <SeekBar
             android:id="@+id/radius_seekBar"
@@ -62,7 +63,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical">
 
         <SeekBar
             android:id="@+id/mass_seekBar"
@@ -88,7 +90,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical">
 
         <SeekBar
             android:id="@+id/density_seekBar"
@@ -106,4 +109,13 @@
             android:inputType="number"
             android:text="20" />
     </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/restartButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="8dp"
+        app:srcCompat="@drawable/ic_settings_backup_restore_white_36dp" />
 </LinearLayout>

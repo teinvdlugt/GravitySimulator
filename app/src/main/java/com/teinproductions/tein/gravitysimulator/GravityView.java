@@ -48,7 +48,7 @@ public class GravityView extends View {
                         removeLuminariesOutsideField();
                         Luminary.collide(luminaries);
                     }
-                    postInvalidate();
+                        postInvalidate();
                     try {
                         Thread.sleep(1);
                     } catch (InterruptedException e) {
@@ -88,6 +88,13 @@ public class GravityView extends View {
             return true;
         }
         return super.onTouchEvent(event);
+    }
+
+    public void restart() {
+        synchronized (lock) {
+            luminaries.clear();
+            invalidate();
+        }
     }
 
     private void init() {

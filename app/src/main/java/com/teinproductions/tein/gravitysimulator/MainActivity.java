@@ -54,6 +54,12 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                 onClickPause();
             }
         });
+        findViewById(R.id.restartButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onClickRestart();
+            }
+        });
     }
 
     private void initViews() {
@@ -138,6 +144,10 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
     private void onClickPause() {
         gravityView.stop();
+    }
+
+    private void onClickRestart() {
+        gravityView.restart();
     }
 
     @Override
