@@ -5,29 +5,15 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <LinearLayout
+    <ImageButton
+        android:id="@+id/playPauseButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="end">
-
-        <ImageButton
-            android:id="@+id/pauseButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/xs_play"
-            android:padding="8dp"
-            app:srcCompat="@drawable/ic_pause_white_36dp" />
-
-        <ImageButton
-            android:id="@+id/playButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/xs_pause"
-            android:padding="8dp"
-            app:srcCompat="@drawable/ic_play_arrow_white_36dp" />
-    </LinearLayout>
+        android:layout_gravity="end"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/xs_play"
+        android:padding="8dp"
+        app:srcCompat="@drawable/ic_play_arrow_white_36dp" />
 
     <TextView
         android:layout_width="wrap_content"
