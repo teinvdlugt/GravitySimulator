@@ -5,7 +5,7 @@
     <string name="action_settings">Settings</string>
     <string name="xs_play_imgButton">Play or pause</string>
     <string name="radius_in_m">Radius in m</string>
-    <string name="mass_in_kg">Mass in kg</string>
+    <string name="mass_in_million_kg">Mass in million kilograms</string>
     <string name="density_in_kg_m_3">Density in kg/m^3</string>
     <string name="xs_play">Play</string>
     <string name="xs_pause">Pause</string>

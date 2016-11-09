@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                 radiusET.setText("" + progress);
                 break;
             case R.id.mass_seekBar:
-                gravityView.setMass(progress);
+                gravityView.setMass(progress * 1000000);
                 massET.setText("" + progress);
                 break;
             case R.id.density_seekBar:
@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                 if (mass > massSeekBar.getMax())
                     massSeekBar.setProgress(massSeekBar.getMax());
                 else massSeekBar.setProgress(mass);
-                gravityView.setMass(mass);
+                gravityView.setMass(mass * 1000000);
             }
 
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {/*ignored*/}

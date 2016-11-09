@@ -69,6 +69,14 @@ public class Luminary {
         return velocityY;
     }
 
+    public void setVelocityX(double velocityX) {
+        this.velocityX = velocityX;
+    }
+
+    public void setVelocityY(double velocityY) {
+        this.velocityY = velocityY;
+    }
+
     public double getMass() {
         return mass;
     }
@@ -96,7 +104,7 @@ public class Luminary {
     /**
      * Use the {@code acceleration} of the {@code Luminary} to change its
      * position and velocity during a given time. After that, reset the
-     * {@code} acceleration to 0.
+     * {@code acceleration} to 0.
      *
      * @param time The time to use in the calculations.
      */
@@ -118,6 +126,7 @@ public class Luminary {
     public static void move(ArrayList<Luminary> luminaries, double time) {
         if (luminaries.size() == 1) {
             luminaries.get(0).addPos(luminaries.get(0).getVelocityX() * time, luminaries.get(0).getVelocityY() * time);
+            return;
         }
 
         for (int i = 0; i < luminaries.size(); i++) {

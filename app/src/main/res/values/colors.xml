@@ -2,4 +2,5 @@
 <resources>
     <color name="backgroundColor">#ff000222</color>
     <color name="luminaryColor">#ffffec68</color>
+    <color name="velocityArrowColor">#d75300</color>
 </resources>
